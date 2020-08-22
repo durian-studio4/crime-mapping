@@ -1,0 +1,158 @@
+.container{
+    display: block;
+    margin: auto;
+}
+.header{
+    background: grey;
+    color: white;
+    margin: 0;
+    border: none;
+    padding: 15px;
+}
+
+.list{
+    margin: 0;
+    border: none;
+}
+.list ul{
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background: #333;
+}
+
+.list ul li{
+    float: left;
+}
+
+
+.list ul li a{
+    display: block;
+    color:white;
+    padding: 14px 16px;
+    text-decoration: none;
+    border-right: solid 1px grey;
+}
+
+.list ul li a:hover{
+    background: #111;
+}
+
+.input-form{
+    display: flex;
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+
+.input-title{
+    border: 1px solid black;
+    padding: 10px;
+    border-radius: 4px;
+    box-sizing: border-box;
+    font-size: 14px;
+    outline: none;
+    margin: 8px;
+}
+
+.input-date{
+    border: 1px solid black;
+    padding: 10px;
+    border-radius: 4px;
+    box-sizing: border-box;
+    font-size: 14px;
+    outline: none;
+    margin: 8px;
+}
+
+.input-content{
+    border: 1px solid black;
+    padding: 10px;
+    border-radius: 4px;
+    box-sizing: border-box;
+    font-size: 14px;
+    outline: none;
+    margin: 8px;
+}
+
+.btn-save{
+    padding: 10px 30px;
+    border-radius: 8px;
+    background: grey;
+    color: white;
+    font-size: 12px;
+    font-weight: bold;
+    text-transform: uppercase;
+    outline: none;
+    cursor: pointer;
+    
+}
+.card-content{
+    border: 1px solid black;
+    border-radius: 4px;
+    padding: 16px;
+    box-shadow: 4px 3px 9px black;
+    margin-bottom: 16px;
+}
+
+.card-content p{
+    margin: 0px;
+}
+
+.btn-update{
+    padding: 8px 16px;
+    float: right;
+    font-weight: bold;
+    font-size: 12px;
+    border-radius: 8px;
+    outline: none;
+    display: block;
+}
+.btn-update:hover{
+    cursor: pointer;
+    background: rgba(0, 0, 0, 0.2);
+}
+
+.btn-delete{
+    background: red;
+    color: white;
+    padding: 8px 16px;
+    float: right;
+    font-weight: bold;
+    font-size: 12px;
+    border-radius: 8px;
+    outline: none;
+    display: block;
+    cursor: pointer;
+}
+
+.btn-delete:hover{
+    background: rgb(238, 60, 60);;
+}
+
+.btn-cancel{
+    border: 1px solid red;
+    color: red;
+    padding: 10px 30px;
+    font-weight: bold;
+    font-size: 12px;
+    margin-right: 10px;
+    text-transform: uppercase;
+    outline: none;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.title{
+    font-size: 24px;
+    font-weight: bold
+}
+
+.date{
+    font-size: 14px;
+}
+
+.content{
+    padding-top: 20px;
+    font-size: 14px;
+}

@@ -1,0 +1,44 @@
+.container {
+  display: block;
+  margin: auto;
+}
+.header {
+  background: grey;
+  color: white;
+  margin: 0;
+  border: none;
+  padding: 15px;
+}
+
+.list {
+  margin: 0;
+  border: none;
+}
+.list ul {
+  display: flex;
+  justify-content: space-between;
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  background: #333;
+}
+
+.list ul li {
+  float: left;
+}
+
+.list ul li a p {
+  color: white;
+  padding: 14px 16px;
+  text-decoration: none;
+  border-right: solid 1px grey;
+}
+
+.list ul li a:hover {
+  background: #111;
+}
+
+img {
+  height: 100%;
+}
