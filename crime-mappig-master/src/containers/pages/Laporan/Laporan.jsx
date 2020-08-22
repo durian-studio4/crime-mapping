@@ -1,154 +1,178 @@
-import React, { Component, Fragment } from 'react';
-import './Laporan.css';
-import { addDataToAPI, getDataFromAPI, updateDataAPI, deleteDataAPI } from '../../../config/redux/action';
-import { connect } from 'react-redux';
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect, Fragment } from "react";
+import { format } from "date-fns";
+import "./Laporan.css";
+import {
+  addDataToAPI,
+  getDataFromAPI,
+  updateDataAPI,
+  deleteDataAPI,
+} from "../../../config/redux/action";
+import { connect, useSelector, useDispatch } from "react-redux";
+import { Link, Redirect } from "react-router-dom";
+
+const initialDate = format(new Date(), "dd-MM-yyyy");
 
 const initialState = {
-   title: '',
-   content: '',
-   date: '',
-   textButton: 'SAVE',
-   noteId: ''
-}
+  title: "",
+  content: "",
+  date: initialDate,
+  textButton: "SAVE",
+  noteId: "",
+};
 
 const Laporan = () => {
+  const [{ content, date, noteId, textButton, title }, setState] = useState(
+    initialState
+  );
 
-    const componentDidMount() {
-        const userData = JSON.parse(localStorage.getItem('userData'));
-        this.props.getNotes(userData.uid);
+  const [isRedirect, setIsRedirect] = useState(false);
+  const userData = JSON.parse(localStorage.getItem("userData"));
+
+  const notes = useSelector((state) => state.notes);
+  const dispatch = useDispatch();
+
+  const saveNotes = (data) => dispatch(addDataToAPI(data));
+  const getNotes = (data) => dispatch(getDataFromAPI(data));
+  const updateNotes = (data) => dispatch(updateDataAPI(data));
+  const deleteNotes = (data) => dispatch(deleteDataAPI(data));
+
+  useEffect(() => {
+    getNotes(userData.uid);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const handleSaveNotes = () => {
+    const userData = JSON.parse(localStorage.getItem("userData"));
+
+    const data = {
+      title,
+      content,
+      date,
+      userId: userData.uid,
+    };
+
+    if (textButton === "SAVE") {
+      saveNotes(data);
+      alert("SUCCESS");
+      setState({ ...initialState });
+    } else {
+      data.noteId = noteId;
+      updateNotes(data);
+      alert("UPDATE SUCCESS");
     }
+  };
 
-    const handleSaveNotes = () => {
-        const { title, content, date, textButton, noteId } = this.state;
-        const { saveNotes, updateNotes } = this.props;
-        const userData = JSON.parse(localStorage.getItem('userData'))
+  const onInputChange = (e) => {
+    const { id, value } = e.target;
+    setState((state) => ({ ...state, [id]: value }));
+  };
 
-        const data = {
-            title: title,
-            content: content,
-            date: date,
-            userId: userData.uid
-        }
-        if (textButton === 'SAVE') {
-            saveNotes(data)
-            alert('SUCCESS')
-            this.setState({
-                title: '',
-                date: '',
-                content: ''
-            })
-        } else {
-            data.noteId = noteId;
-            updateNotes(data)
-            alert('UPDATE SUCCESS')
-        }
-    }
+  const onUpdateNotes = (note) => {
+    const { data, id } = note;
+    setState({
+      title: data.title,
+      content: data.content,
+      textButton: "UPDATE",
+      noteId: id,
+      date: initialDate,
+    });
+    updateNotes(data);
+  };
 
-    const onInputChange = (e, type) => {
-        this.setState({
-            [type]: e.target.value
-        })
-    }
+  const cancelUpdate = () => {
+    setState({
+      title: "",
+      content: "",
+      textButton: "SAVE",
+      noteId,
+    });
+  };
 
-    const updateNotes = (note) => {
-        this.setState({
-            title: note.data.title,
-            date: note.data.date,
-            content: note.data.content,
-            textButton: 'UPDATE',
-            noteId: note.id
-        })
-    }
+  const onDeleteNotes = (note) => {
+    const userData = JSON.parse(localStorage.getItem("userData"));
+    const data = {
+      userId: userData.uid,
+      noteId: note.id,
+    };
+    deleteNotes(data);
+    alert("DELETE SUCCESS");
+  };
 
-    const cancelUpdate = () => {
-        this.setState({
-            title: '',
-            date: '',
-            content: '',
-            textButton: 'SAVE'
-        })
+  const logOut = () => {
+    setIsRedirect(true);
+    localStorage.clear();
+  };
 
-    }
+  if (isRedirect) {
+    return <Redirect to="/login" />;
+  }
 
-    const deleteNotes = (note) => {
-        const { deleteNotes } = this.props;
-        const userData = JSON.parse(localStorage.getItem('userData'))
-        const data = {
-            userId: userData.uid,
-            noteId: note.id
-        }
-        deleteNotes(data)
-        alert('DELETE SUCCESS')
-    }
+  return (
+    <div className="container">
+      <h1 className="header">CRIME MAPPING</h1>
+      <div className="list">
+        <ul>
+          <li>
+            <Link to="/Dashboard/Laporan-Kejahatan">Laporan Kejahatan</Link>
+          </li>
+          <li onClick={logOut}>
+            <Link>Logout</Link>
+          </li>
+        </ul>
+      </div>
+      <div className="input-form">
+        <input
+          placeholder="Title"
+          className="input-title"
+          id="title"
+          value={title}
+          onChange={onInputChange}
+        />
+        <input
+          placeholder="Content"
+          className="input-content"
+          id="content"
+          value={content}
+          onChange={onInputChange}
+        />
+        {textButton === "UPDATE" ? (
+          <button className="btn-cancel" onClick={cancelUpdate}>
+            CANCEL
+          </button>
+        ) : null}
+        <button className="btn-save" onClick={handleSaveNotes}>
+          {textButton}
+        </button>
+      </div>
+      {notes.length > 0 ? (
+        <Fragment>
+          {notes.map((note) => {
+            return (
+              <div className="card-content" key={note.id}>
+                <button
+                  className="btn-update"
+                  onClick={() => onUpdateNotes(note)}
+                >
+                  {" "}
+                  Update{" "}
+                </button>
+                <button
+                  className="btn-delete"
+                  onClick={() => onDeleteNotes(note)}
+                >
+                  {" "}
+                  Delete{" "}
+                </button>
+                <p className="title">{note.data.title}</p>
+                <p className="date">{note.data.date}</p>
+                <p className="content">{note.data.content}</p>
+              </div>
+            );
+          })}
+        </Fragment>
+      ) : null}
+    </div>
+  );
+};
 
-    const logOut = () => {
-        setRedirect(true);
-        localStorage.clear();
-      };
-
-    render() {
-        const { title, content, date, textButton } = this.state;
-        const { notes } = this.props;
-        const { updateNotes, cancelUpdate } = this;
-        return (
-            <div className="container">
-                <h1 className="header">CRIME MAPPING</h1>
-                <div className="list">
-                    <ul>
-                        <li>
-                            <Link to="/Dashboard/Laporan Kejahatan">Laporan Kejahatan</Link>
-                        </li>
-                        <li onClick={logOut}>
-                            <Link>Logout</Link>
-                        </li>
-                    </ul>
-                </div>
-                <div className="input-form">
-                    <input placeholder="Title" className="input-title" value={title} onChange={(e) => this.onInputChange(e, 'title')} />
-                    <input placeholder="Date" className="input-date" value={date} onChange={(e) => this.onInputChange(e, 'date')} />
-                    <input placeholder="Content" className="input-content" value={content} onChange={(e) => this.onInputChange(e, 'content')} />
-                    {
-                        textButton === 'UPDATE' ? (
-                            <button className="btn-cancel" onClick={this.handleSaveNotes} onClick={cancelUpdate}>CANCEL</button>
-                        ) : null
-                    }
-                    <button className="btn-save" onClick={this.handleSaveNotes}>{textButton}</button>
-                </div>
-                {
-                    notes.length > 0 ? (
-                        <Fragment>
-                            {
-                                notes.map(note => {
-                                    return (
-                                        <div className="card-content" key={note.id}>
-                                            <button className="btn-update" onClick={() => updateNotes(note)}> Update </button>
-                                            <button className="btn-delete" onClick={() => this.deleteNotes(note)}> Delete </button>
-                                            <p className="title">{note.data.title}</p>
-                                            <p className="date">{note.data.date}</p>
-                                            <p className="content">{note.data.content}</p>
-                                        </div>
-                                    )
-                                })
-                            }
-                        </Fragment>
-                    ) : null
-                }
-            </div>
-        )
-    }
-}
-
-const reduxState = (state) => ({
-    userData: state.user,
-    notes: state.notes
-})
-
-const reduxDispatch = (dispatch) => ({
-    saveNotes: (data) => dispatch(addDataToAPI(data)),
-    getNotes: (data) => dispatch(getDataFromAPI(data)),
-    updateNotes: (data) => dispatch(updateDataAPI(data)),
-    deleteNotes: (data) => dispatch(deleteDataAPI(data)),
-})
-
-export default connect(reduxState, reduxDispatch)(Laporan);
+export default Laporan;
